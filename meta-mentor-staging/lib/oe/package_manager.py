@@ -284,6 +284,14 @@ class PackageManager(object):
 
         if globs is None:
             globs = self.d.getVar('IMAGE_INSTALL_COMPLEMENTARY', True)
+
+            split_debug_fs = self.d.getVar('SPLIT_DEBUG_FS', True)
+            # In case of split debug file-system, dev and dbg packages would be
+            # installed in a separate folder, so we don't want them here.
+            if split_debug_fs == "True":
+                globs = globs.replace("*-dbg", "")
+                globs = globs.replace("*-dev", "")
+
             split_linguas = set()
 
             for translation in self.d.getVar('IMAGE_LINGUAS', True).split():
@@ -1012,6 +1020,7 @@ class OpkgPM(PackageManager):
         self.opkg_cmd = bb.utils.which(os.getenv('PATH'), "opkg-cl")
         self.opkg_args = "-f %s -o %s " % (self.config_file, target_rootfs)
         self.opkg_args += self.d.getVar("OPKG_ARGS", True)
+        self.opkg_extra_debug_args = " -d debug_fs "
 
         opkg_lib_dir = self.d.getVar('OPKGLIBDIR', True)
         if opkg_lib_dir[0] == "/":
@@ -1113,6 +1122,8 @@ class OpkgPM(PackageManager):
                 if os.path.isdir(pkgs_dir):
                     config_file.write("src oe-%s file:%s\n" %
                                       (arch, pkgs_dir))
+            config_file.write("dest root /\n")
+            config_file.write("dest debug_fs dbg\n")
 
     def insert_feeds_uris(self):
         if self.feed_uris == "":
