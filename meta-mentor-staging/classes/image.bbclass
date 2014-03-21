@@ -238,7 +238,7 @@ python rootfs_runtime_mapping() {
 do_rootfs[prefuncs] += "rootfs_runtime_mapping"
 
 fakeroot python do_rootfs () {
-    from mentor.rootfs import create_rootfs
+    from oe.rootfs import create_rootfs
     from oe.image import create_image
     from oe.manifest import create_manifest
 

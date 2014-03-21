@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from oe.utils import execute_pre_post_process
 from oe.utils import contains as base_contains
-from mentor.package_manager import *
+from oe.package_manager import *
 from oe.manifest import *
 import oe.path
 import filecmp
